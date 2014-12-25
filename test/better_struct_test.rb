@@ -28,9 +28,11 @@ class BetterStructTest < Minitest::Test
   def test_block_argument_wrapping
     better_struct = BetterStruct.new([3, 2, 1])
 
-    better_struct.each_with_index do |value, index|
-      assert_equal value.class, BetterStruct
-      assert_equal index.class, BetterStruct
+    better_struct.each_with_index do |val, i|
+      assert val.is_a?(BetterStruct)
+      assert val.value.is_a?(Integer)
+      assert i.is_a?(BetterStruct)
+      assert i.value.is_a?(Integer)
     end
   end
 

@@ -53,12 +53,8 @@ private
 
     if value.respond_to?(method_name)
       wrap(value.public_send(*args, &wrap_block_arguments(*args, &block)))
-    elsif @defined_methods[method_name] || value.nil?
-      wrap(@defined_methods[method_name])
     else
-      error = NoMethodError.new "undefined method `#{ method_name }' for #{ self }", args
-      error.set_backtrace caller(1)
-      raise error
+      wrap(@defined_methods[method_name])
     end
   end
 end

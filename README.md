@@ -32,13 +32,13 @@ BetterStruct.new(nil) == BetterStruct.new(nil).some_method # => true
 ```ruby
 better_struct = BetterStruct.new("foobar")
 
-
 better_struct[0..2].is_a?(BetterStruct)        # => true
 better_struct[0..2] == BetterStruct.new("foo") # => true
 ```
 
 ```ruby
 better_struct = BetterStruct.new([1, 2, 3])
+
 result = better_struct.all? { |i| i.is_a?(BetterStruct) }
 
 result.is_a?(BetterStruct)       # => true
@@ -49,7 +49,8 @@ result == BetterStruct.new(true) # => true
 #### Like OpenStruct
 
 ```ruby
-better_struct = BetterStruct.new({ "FooBar1" => { foo_bar2: "Hello World!" } })
+some_hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
+better_struct = BetterStruct.new(some_hash)
 
 better_struct.foo_bar1.foo_bar2 == BetterStruct.new("Hello World!") # => true
 ```
@@ -58,9 +59,8 @@ better_struct.foo_bar1.foo_bar2 == BetterStruct.new("Hello World!") # => true
 
 ```ruby
 better_struct = BetterStruct.new("foobar")
-new_better_struct = better_struct.gsub("foo", "super-")
 
-new_better_struct.value == "super-foo" # => true
+better_struct.gsub("foo", "super-").value == "super-foo" # => true
 
 ```
 
