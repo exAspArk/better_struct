@@ -31,6 +31,8 @@ private
   end
 
   def wrap_block_arguments(*args, &block)
+    return if block.nil?
+
     Proc.new do |*args|
       wrapped_arguments = args.map { |arg| wrap(arg) }
       block.call(*wrapped_arguments)
