@@ -63,6 +63,14 @@ private
   end
 
   def unwrap_items(wrapped_array)
-    wrap(wrapped_array.value.map(&:value))
+    array = wrapped_array.value
+
+    if array
+      array_with_unwrapped_items = array.map { |i| i.is_a?(self.class) ? i.value : i }
+
+      wrap(array_with_unwrapped_items)
+    else
+      wrap(nil)
+    end
   end
 end
