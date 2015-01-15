@@ -41,4 +41,17 @@ class BetterStructTest < Minitest::Test
 
     assert_equal better_struct.foo_bar1.foo_bar2, BetterStruct.new("Hello World!")
   end
+
+  def test_map_result
+    better_struct = BetterStruct.new([1, 2, 3])
+
+    mapped = better_struct.map do |i|
+      assert i.is_a?(BetterStruct)
+      i
+    end
+
+    mapped.value.each do |i|
+      assert !i.is_a?(BetterStruct)
+    end
+  end
 end

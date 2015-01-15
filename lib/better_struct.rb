@@ -54,9 +54,15 @@ private
     method_name = args.first.to_s
 
     if value.respond_to?(method_name)
-      wrap(value.public_send(*args, &wrap_block_arguments(*args, &block)))
+      result = wrap(value.public_send(*args, &wrap_block_arguments(*args, &block)))
+
+      method_name == "map" ? unwrap_items(result) : result
     else
       wrap(@defined_methods[method_name])
     end
+  end
+
+  def unwrap_items(wrapped_array)
+    wrap(wrapped_array.value.map(&:value))
   end
 end
