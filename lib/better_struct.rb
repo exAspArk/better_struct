@@ -17,7 +17,7 @@ class BetterStruct
   end
 
   def ==(other)
-    value == other.value
+    other.is_a?(self.class) && value == other.value
   end
 
   def inspect
