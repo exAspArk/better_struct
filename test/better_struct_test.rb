@@ -54,4 +54,13 @@ class BetterStructTest < Minitest::Test
       assert !i.is_a?(BetterStruct)
     end
   end
+
+  def test_equality
+    assert BetterStruct.new(1) == BetterStruct.new(1.0)
+    assert BetterStruct.new(1) != 1
+  end
+
+  def test_underscoring_methods
+    assert BetterStruct.new({ "Word With-Space" => 1 }).word_with_space.value == 1
+  end
 end
