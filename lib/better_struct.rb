@@ -1,5 +1,6 @@
 require "better_struct/version"
 require "forwardable"
+require "active_support/inflector"
 
 class BetterStruct
   extend Forwardable
@@ -12,7 +13,7 @@ class BetterStruct
     @defined_methods = {}
 
     if value && value.respond_to?(:each_pair)
-      value.each_pair { |key, value| @defined_methods[underscore(key.to_s)] = value }
+      value.each_pair { |key, value| @defined_methods[methodize(key.to_s)] = value }
     end
   end
 
@@ -26,6 +27,10 @@ class BetterStruct
 
 private
 
+  def methodize(string)
+    ActiveSupport::Inflector.parameterize(ActiveSupport::Inflector.underscore(string), "_")
+  end
+
   def wrap(value)
     value.is_a?(self.class) ? self : self.class.new(value)
   end
@@ -37,17 +42,6 @@ private
       wrapped_arguments = args.map { |arg| wrap(arg) }
       block.call(*wrapped_arguments)
     end
-  end
-
-  def underscore(word)
-    return word.to_s if word.to_s =~ /\A[a-z0-9_]+\z/
-
-    word = word.to_s.gsub(/\W+/, '_')
-    word.gsub!(/\A[_]+|[_]+\z/, '')
-    word.gsub!(/([A-Z\d]+)([A-Z][a-z])/,'\1_\2')
-    word.gsub!(/([a-z\d])([A-Z])/,'\1_\2')
-    word.downcase!
-    word
   end
 
   def method_missing(*args, &block)

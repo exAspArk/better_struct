@@ -63,4 +63,8 @@ class BetterStructTest < Minitest::Test
   def test_underscoring_methods
     assert BetterStruct.new({ "Word (With-Space)" => 1 }).word_with_space.value == 1
   end
+
+  def test_transliteration
+    assert BetterStruct.new({ "Título" => 1 }).titulo.value == 1
+  end
 end
