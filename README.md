@@ -2,15 +2,28 @@
 
 [![Build Status](https://travis-ci.org/exAspArk/better_struct.svg)](https://travis-ci.org/exAspArk/better_struct)
 
-Use your data without pain.
-It behaves like OpenStruct with monads. Look at the examples below.
+**BetterStruct** is a data structure which allows you to use your data without pain.
+
+It behaves like an OpenStruct on steroids with monad.
+
+```ruby
+hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
+
+# Instead of this:
+if hash["FooBar1"] && hash["FooBar1"][:foo_bar2]
+  puts hash["FooBar1"][:foo_bar2]
+end
+
+# Simply use:
+puts BetterStruct.new(hash).foo_bar1.foo_bar2.value
+```
 
 ## Installation
 
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'better_struct'
+gem "better_struct"
 ```
 
 And then execute:
@@ -70,9 +83,28 @@ better_struct.gsub("foo", "super-").value == "super-foo" # => true
 
     $ ruby -Ilib:test test/better_struct_test.rb
 
+## Benchmarking
+
+It is as fast as an OpenStruct:
+
+```
+$ ruby scripts/benchmark.rb
+
+Calculating -------------------------------------
+          OpenStruct     6.562k i/100ms
+        BetterStruct     7.155k i/100ms
+-------------------------------------------------
+          OpenStruct     75.194k (± 7.4%) i/s -    374.034k
+        BetterStruct     76.987k (± 6.7%) i/s -    386.370k
+
+Comparison:
+        BetterStruct:    76986.7 i/s
+          OpenStruct:    75193.6 i/s - 1.02x slower
+```
+
 ## Contributing
 
-1. Fork it ( https://github.com/[my-github-username]/better_struct/fork )
+1. Fork it ( https://github.com/exAspArk/better_struct/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
