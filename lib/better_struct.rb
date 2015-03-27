@@ -1,5 +1,4 @@
 require "better_struct/version"
-require "forwardable"
 require "active_support/inflector"
 
 class BetterStruct
