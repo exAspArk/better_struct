@@ -1,5 +1,7 @@
 # BetterStruct
 
+[![Build Status](https://travis-ci.org/exAspArk/better_struct.svg)](https://travis-ci.org/exAspArk/better_struct)
+
 Use your data without pain.
 It behaves like OpenStruct with monads. Look at the examples below.
 
