@@ -1,8 +1,8 @@
-require "better_struct/version"
-require "active_support/inflector"
+require "set"
+require_relative "./better_struct/version"
+require_relative "./better_struct/methodize"
 
 class BetterStruct
-  PARAMETERIZE_SEPARATOR = "_".freeze
   EQUAL_SIGN = "=".freeze
   MAP_METHOD_NAMES = %i(map map!).to_set.freeze
 
@@ -26,21 +26,11 @@ class BetterStruct
 
 private
 
-  def methodize(string)
-    result = ActiveSupport::Inflector.underscore(string)
-
-    if result =~ /[^\w]/
-      ActiveSupport::Inflector.parameterize(result, PARAMETERIZE_SEPARATOR)
-    else
-      result
-    end
-  end
-
   def wrap(value)
     value.is_a?(self.class) ? self : self.class.new(value)
   end
 
-  def wrap_block_args(*args, &block)
+  def wrap_block_args(&block)
     return if block.nil?
 
     Proc.new do |*args|
@@ -52,16 +42,15 @@ private
   def method_missing(method_name, *args, &block)
     if value.respond_to?(method_name)
       delegate_method(method_name, *args, &block)
-    elsif assignment?(method_name, *args, &block) && defined_methods
-      attribute = methodize(method_name[0...-1])
-      @defined_methods[attribute] = args.first
+    elsif assignment?(method_name) && defined_methods
+      @defined_methods[methodize(method_name[0...-1])] = args.first
     else
       wrap(defined_methods[method_name.to_s])
     end
   end
 
-  def assignment?(method_name, *args, &block)
-    method_name[-1] == EQUAL_SIGN && args.size == 1 && block.nil?
+  def assignment?(method_name)
+    method_name[-1] == EQUAL_SIGN
   end
 
   def defined_methods
@@ -77,12 +66,12 @@ private
   end
 
   def delegate_method(method_name, *args, &block)
-    result = wrap(value.public_send(method_name, *unwrap_items(args), &wrap_block_args(*args, &block)))
+    result = value.public_send(method_name, *unwrap_items(args), &wrap_block_args(&block))
 
     if MAP_METHOD_NAMES.include?(method_name)
-      wrap(unwrap_items(result.value))
+      wrap(unwrap_items(result))
     else
-      result
+      wrap(result)
     end
   end
 
