@@ -56,7 +56,7 @@ better_struct = BetterStruct.new([1, 2, 3])
 better_struct.all? { |i| i.is_a?(BetterStruct) } == BetterStruct.new(true) # => true
 ```
 
-#### Like OpenStruct on steroids
+#### Like an OpenStruct on steroids
 
 ```ruby
 some_hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
@@ -80,21 +80,21 @@ better_struct.gsub("foo", "super-").value == "super-foo" # => true
 
 ## Benchmarking
 
-Not slower than OpenStruct:
+**BetterStruct** is even faster than an OpenStruct:
 
 ```
 $ ruby scripts/benchmark.rb
 
 Calculating -------------------------------------
-          OpenStruct     6.562k i/100ms
-        BetterStruct     7.155k i/100ms
+          OpenStruct     7.334k i/100ms
+        BetterStruct     7.856k i/100ms
 -------------------------------------------------
-          OpenStruct     75.194k (± 7.4%) i/s -    374.034k
-        BetterStruct     76.987k (± 6.7%) i/s -    386.370k
+          OpenStruct     75.971k (± 7.1%) i/s -    381.368k
+        BetterStruct     84.520k (± 4.5%) i/s -    424.224k
 
 Comparison:
-        BetterStruct:    76986.7 i/s
-          OpenStruct:    75193.6 i/s - 1.02x slower
+        BetterStruct:    84519.8 i/s
+          OpenStruct:    75971.1 i/s - 1.11x slower
 ```
 
 ## Contributing
