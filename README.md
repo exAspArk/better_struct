@@ -10,12 +10,12 @@ It behaves like an OpenStruct on steroids with monad.
 hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
 
 # Instead of this:
-if hash["FooBar1"] && hash["FooBar1"][:foo_bar2]
-  puts hash["FooBar1"][:foo_bar2]
+if hash["FooBar1"] && hash["FooBar1"][:foo_bar2] && hash["FooBar1"][:foo_bar2].respond_to?(:sub)
+  hash["FooBar1"][:foo_bar2].sub("Hello ", "") # => "World!"
 end
 
 # Simply use:
-puts BetterStruct.new(hash).foo_bar1.foo_bar2.value
+BetterStruct.new(hash).foo_bar1.foo_bar2.sub("Hello ", "").value # => "World!"
 ```
 
 ## Installation
@@ -39,7 +39,7 @@ Or install it yourself as:
 #### Maybe monad
 
 ```ruby
-BetterStruct.new(nil) == BetterStruct.new(nil).some_method # => true
+BetterStruct.new(nil) == BetterStruct.new(nil).this_method.does_not_exist # => true
 ```
 
 #### Everything is wrapped
@@ -47,21 +47,16 @@ BetterStruct.new(nil) == BetterStruct.new(nil).some_method # => true
 ```ruby
 better_struct = BetterStruct.new("foobar")
 
-better_struct[0..2].is_a?(BetterStruct)        # => true
 better_struct[0..2] == BetterStruct.new("foo") # => true
 ```
 
 ```ruby
 better_struct = BetterStruct.new([1, 2, 3])
 
-result = better_struct.all? { |i| i.is_a?(BetterStruct) }
-
-result.is_a?(BetterStruct)       # => true
-result == BetterStruct.new(true) # => true
-
+better_struct.all? { |i| i.is_a?(BetterStruct) } == BetterStruct.new(true) # => true
 ```
 
-#### Like OpenStruct
+#### Like OpenStruct on steroids
 
 ```ruby
 some_hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
@@ -85,7 +80,7 @@ better_struct.gsub("foo", "super-").value == "super-foo" # => true
 
 ## Benchmarking
 
-It is as fast as an OpenStruct:
+Not slower than OpenStruct:
 
 ```
 $ ruby scripts/benchmark.rb
