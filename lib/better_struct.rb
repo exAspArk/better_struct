@@ -24,6 +24,10 @@ class BetterStruct
     value.to_s
   end
 
+  def empty?
+    value.respond_to?(:empty?) ? !!value.empty? : !value
+  end
+
 private
 
   def wrap(value)

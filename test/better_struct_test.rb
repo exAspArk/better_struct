@@ -33,6 +33,18 @@ module BetterStructTest
       assert better_struct.to_s == "1"
     end
 
+    def test_empty
+      better_struct = BetterStruct.new([])
+
+      assert better_struct.empty? == true
+    end
+
+    def test_not_empty
+      better_struct = BetterStruct.new(1)
+
+      assert better_struct.empty? == false
+    end
+
     def test_block_argument_wrapping
       better_struct = BetterStruct.new([3, 2, 1])
 
