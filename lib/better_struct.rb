@@ -34,12 +34,12 @@ private
     value.is_a?(self.class) ? self : self.class.new(value)
   end
 
-  def wrap_block_args(&block)
-    return if block.nil?
+  def wrap_block_args
+    return unless block_given?
 
     Proc.new do |*args|
       wrapped_arguments = args.map! { |arg| wrap(arg) }
-      block.call(*wrapped_arguments)
+      yield(*wrapped_arguments)
     end
   end
 
@@ -62,7 +62,7 @@ private
       result = {}
 
       if value && value.respond_to?(:each_pair)
-        value.each_pair { |key, value| result[methodize(key.to_s)] = value }
+        value.each_pair { |key, v| result[methodize(key.to_s)] = v }
       end
 
       result

@@ -79,9 +79,9 @@ module BetterStructTest
     end
 
     def test_underscoring_methods
-      better_struct = BetterStruct.new({ "Word (With-Space)" => 1 })
+      better_struct = BetterStruct.new({ "1 Word (With-Space)" => 1 })
 
-      assert better_struct.word_with_space.value == 1
+      assert better_struct._1_word_with_space.value == 1
     end
 
     def test_transliteration

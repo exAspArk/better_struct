@@ -5,11 +5,11 @@ class BetterStruct
   TRANSLITERATION_FROM = "ÀÁÂÃÄÅàáâãäåĀāĂăĄąÇçĆćĈĉĊċČčÐðĎďĐđÈÉÊËèéêëĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħÌÍÎÏìíîïĨĩĪīĬĭĮįİıĴĵĶķĸĹĺĻļĽľĿŀŁłÑñŃńŅņŇňŉŊŋÒÓÔÕÖØòóôõöøŌōŎŏŐőŔŕŖŗŘřŚśŜŝŞşŠšſŢţŤťŦŧÙÚÛÜùúûüŨũŪūŬŭŮůŰűŲųŴŵÝýÿŶŷŸŹźŻżŽž".freeze
   TRANSLITERATION_TO   = "AAAAAAaaaaaaAaAaAaCcCcCcCcCcDdDdDdEEEEeeeeEeEeEeEeEeGgGgGgGgHhHhIIIIiiiiIiIiIiIiIiJjKkkLlLlLlLlLlNnNnNnNnnNnOOOOOOooooooOoOoOoRrRrRrSsSsSsSssTtTtTtUUUUuuuuUuUuUuUuUuUuWwYyyYyYZzZzZz".freeze
 
-  UPCASE_REGEXP = /[A-Z]/.freeze
+  DIGIT_REGEXP = /[0-9]/.freeze
   NOT_UNDERSCORED_REGEXP = /[^a-z0-9_]/.freeze
   NON_ENGLISH_REGEXP = /[#{ TRANSLITERATION_FROM }]/.freeze
   UNDERSCORE_DUPLICATES_REGEXP = /#{ UNDERSCORE_SIGN }{2,}/.freeze
-  UNDERSCORE_BEGIN_OR_END_REGEXP = /^#{ UNDERSCORE_SIGN }|#{ UNDERSCORE_SIGN }$/.freeze
+  UNDERSCORE_END_REGEXP = /#{ UNDERSCORE_SIGN }$/.freeze
   CAMELCASE_ABBREVIATION_REGEX = /([A-Z\d]+)([A-Z][a-z])/.freeze
   CAMELCASE_REGEX = /([a-z\d])([A-Z])/.freeze
 
@@ -18,13 +18,21 @@ class BetterStruct
 private
 
   def methodize(string)
-    return string unless string =~ NOT_UNDERSCORED_REGEXP
+    if string[0] =~ DIGIT_REGEXP
+      duplicated_string = string.dup
+      duplicated_string.prepend(UNDERSCORE_SIGN)
+    end
 
-    string = string.dup
+    unless string =~ NOT_UNDERSCORED_REGEXP
+      return duplicated_string || string
+    end
 
-    transliterate!(string)
-    underscore!(string)
-    string
+    duplicated_string = string.dup if duplicated_string.nil?
+
+    transliterate!(duplicated_string)
+    underscore!(duplicated_string)
+
+    duplicated_string
   end
 
   def transliterate!(string)
@@ -40,7 +48,7 @@ private
       string.downcase!
       string.gsub!(NOT_UNDERSCORED_REGEXP, UNDERSCORE_SIGN)
       string.gsub!(UNDERSCORE_DUPLICATES_REGEXP, UNDERSCORE_SIGN)
-      string.gsub!(UNDERSCORE_BEGIN_OR_END_REGEXP, EMPTY_STRING)
+      string.gsub!(UNDERSCORE_END_REGEXP, EMPTY_STRING)
     end
   end
 end
