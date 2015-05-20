@@ -78,10 +78,22 @@ module BetterStructTest
       assert better_struct.map { |i| i * i }.value == [1, 4, 9]
     end
 
-    def test_underscoring_methods
+    def test_methods_underscoring
+      better_struct = BetterStruct.new({ "! CHAMPION !" => 1 })
+
+      assert better_struct.champion.value == 1
+    end
+
+    def test_methods_underscoring_started_with_digit
       better_struct = BetterStruct.new({ "1 Word (With-Space)" => 1 })
 
       assert better_struct._1_word_with_space.value == 1
+    end
+
+    def test_methods_underscoring_with_underscores_around
+      better_struct = BetterStruct.new({ "_Abc__Def_" => 1 })
+
+      assert better_struct._abc_def_.value == 1
     end
 
     def test_transliteration

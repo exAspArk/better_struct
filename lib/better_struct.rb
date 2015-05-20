@@ -30,56 +30,56 @@ class BetterStruct
 
 private
 
-  def wrap(value)
+  def __wrap(value)
     value.is_a?(self.class) ? self : self.class.new(value)
   end
 
-  def wrap_block_args
+  def __wrap_block_args
     return unless block_given?
 
     Proc.new do |*args|
-      wrapped_arguments = args.map! { |arg| wrap(arg) }
+      wrapped_arguments = args.map! { |arg| __wrap(arg) }
       yield(*wrapped_arguments)
     end
   end
 
   def method_missing(method_name, *args, &block)
     if value.respond_to?(method_name)
-      delegate_method(method_name, *args, &block)
-    elsif assignment?(method_name) && defined_methods
-      @defined_methods[methodize(method_name[0...-1])] = args.first
+      __delegate_method(method_name, *args, &block)
+    elsif __assignment?(method_name) && __defined_methods
+      @__defined_methods[__methodize(method_name[0...-1])] = args.first
     else
-      wrap(defined_methods[method_name.to_s])
+      __wrap(__defined_methods[method_name.to_s])
     end
   end
 
-  def assignment?(method_name)
+  def __assignment?(method_name)
     method_name[-1] == EQUAL_SIGN
   end
 
-  def defined_methods
-    @defined_methods ||= begin
+  def __defined_methods
+    @__defined_methods ||= begin
       result = {}
 
       if value && value.respond_to?(:each_pair)
-        value.each_pair { |key, v| result[methodize(key.to_s)] = v }
+        value.each_pair { |key, v| result[__methodize(key.to_s)] = v }
       end
 
       result
     end
   end
 
-  def delegate_method(method_name, *args, &block)
-    result = value.public_send(method_name, *unwrap_items(args), &wrap_block_args(&block))
+  def __delegate_method(method_name, *args, &block)
+    result = value.public_send(method_name, *__unwrap_items(args), &__wrap_block_args(&block))
 
     if MAP_METHOD_NAMES.include?(method_name)
-      wrap(unwrap_items(result))
+      __wrap(__unwrap_items(result))
     else
-      wrap(result)
+      __wrap(result)
     end
   end
 
-  def unwrap_items(items)
+  def __unwrap_items(items)
     if items.is_a?(Array)
       items.map! { |item| item.is_a?(self.class) ? item.value : item }
     else
