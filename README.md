@@ -7,11 +7,11 @@
 It behaves like an OpenStruct on steroids with monad.
 
 ```ruby
-hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
+hash = { "FooBar1" => { "FooBar2" => "Hello World!" } }
 
 # Instead of this:
-if hash["FooBar1"] && hash["FooBar1"][:foo_bar2] && hash["FooBar1"][:foo_bar2].respond_to?(:sub)
-  hash["FooBar1"][:foo_bar2].sub("Hello ", "") # => "World!"
+if hash["FooBar1"] && hash["FooBar1"]["FooBar2"] && hash["FooBar1"]["FooBar2"].respond_to?(:sub)
+  hash["FooBar1"]["FooBar2"].sub("Hello ", "") # => "World!"
 end
 
 # Simply use:
@@ -59,7 +59,7 @@ better_struct.all? { |i| i.is_a?(BetterStruct) } == BetterStruct.new(true) # => 
 #### Like an OpenStruct on steroids
 
 ```ruby
-some_hash = { "FooBar1" => { foo_bar2: "Hello World!" } }
+some_hash = { foo_bar1: { foo_bar2: "Hello World!" } }
 better_struct = BetterStruct.new(some_hash)
 
 better_struct.foo_bar1.foo_bar2 == BetterStruct.new("Hello World!") # => true
@@ -70,7 +70,7 @@ better_struct.foo_bar1.foo_bar2 == BetterStruct.new("Hello World!") # => true
 ```ruby
 better_struct = BetterStruct.new("foobar")
 
-better_struct.gsub("foo", "super-").value == "super-foo" # => true
+better_struct.gsub("foo", "super-").value == "super-bar" # => true
 
 ```
 
