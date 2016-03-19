@@ -97,6 +97,10 @@ Comparison:
           OpenStruct:    75971.1 i/s - 1.11x slower
 ```
 
+## TODO
+
+* Handle `respond_to?`.
+
 ## Contributing
 
 1. Fork it ( https://github.com/exAspArk/better_struct/fork )
