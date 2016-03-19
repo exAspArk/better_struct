@@ -4,7 +4,7 @@ require_relative "./better_struct/methodize"
 
 class BetterStruct
   EQUAL_SIGN = "=".freeze
-  MAP_METHOD_NAMES = %i(map map!).to_set.freeze
+  MAP_METHOD_NAMES = %w(map map!).to_set.freeze
 
   attr_reader :value
 
@@ -26,10 +26,41 @@ class BetterStruct
   end
 
   def empty?
-    value.respond_to?(:empty?) ? !!value.empty? : !value
+    value.respond_to?(:empty?) ? value.empty? : !value
   end
 
 private
+
+  def __load_defined_methods
+    @__defined_methods = {}
+
+    if value && value.respond_to?(:each_pair)
+      value.each_pair { |key, v| @__defined_methods[__methodize(key)] = v }
+    end
+  end
+
+  def method_missing(method_name, *args, &block)
+    method_name = method_name.to_s
+
+    if value.respond_to?(method_name)
+      __delegate_method(method_name, *args, &block)
+    elsif __assignment?(method_name)
+      @__defined_methods[method_name[0...-1]] = args.first
+    else
+      __wrap(@__defined_methods[method_name])
+    end
+  end
+
+  def __assignment?(method_name)
+    method_name[-1] == EQUAL_SIGN
+  end
+
+  def __delegate_method(method_name, *args, &block)
+    result = value.public_send(method_name, *__unwrap_items(args), &__wrap_block_args(&block))
+    result = __unwrap_items(result) if MAP_METHOD_NAMES.include?(method_name)
+
+    __wrap(result)
+  end
 
   def __wrap(value)
     value.is_a?(self.class) ? self : self.class.new(value)
@@ -44,43 +75,11 @@ private
     end
   end
 
-  def method_missing(method_name, *args, &block)
-    if value.respond_to?(method_name)
-      __delegate_method(method_name, *args, &block)
-    elsif __assignment?(method_name)
-      @__defined_methods[__methodize(method_name[0...-1])] = args.first
-    else
-      __wrap(@__defined_methods[method_name.to_s])
-    end
-  end
-
-  def __assignment?(method_name)
-    method_name[-1] == EQUAL_SIGN
-  end
-
-  def __load_defined_methods
-    @__defined_methods = {}
-
-    if value && value.respond_to?(:each_pair)
-      value.each_pair { |key, v| @__defined_methods[__methodize(key.to_s)] = v }
-    end
-  end
-
-  def __delegate_method(method_name, *args, &block)
-    result = value.public_send(method_name, *__unwrap_items(args), &__wrap_block_args(&block))
-
-    if MAP_METHOD_NAMES.include?(method_name)
-      __wrap(__unwrap_items(result))
-    else
-      __wrap(result)
-    end
-  end
-
   def __unwrap_items(items)
-    if items.is_a?(Array)
-      items.map! { |item| item.is_a?(self.class) ? item.value : item }
-    else
-      items
-    end
+    items.is_a?(Array) ? items.map! { |i| __unwrap(i) } : items
+  end
+
+  def __unwrap(value)
+    value.is_a?(self.class) ? value.value : value
   end
 end

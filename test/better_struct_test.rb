@@ -75,7 +75,7 @@ module BetterStructTest
     def test_operators
       better_struct = BetterStruct.new([1, 2, 3])
 
-      assert better_struct.map { |i| i * i }.value == [1, 4, 9]
+      assert better_struct.map { |i| i * i * 2 }.value == [2, 8, 18]
     end
 
     def test_methods_underscoring

@@ -16,7 +16,8 @@ class BetterStruct
 
 private
 
-  def __methodize(string)
+  def __methodize(value)
+    string = value.to_s
     return string if __methodized?(string)
 
     duplicated_string = string.dup
