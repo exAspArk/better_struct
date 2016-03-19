@@ -78,6 +78,39 @@ module BetterStructTest
       assert better_struct.map { |i| i * i * 2 }.value == [2, 8, 18]
     end
 
+    def test_new_assignment
+      better_struct = BetterStruct.new
+
+      better_struct.head = [1, 2, 3]
+
+      assert better_struct.head == BetterStruct.new([1, 2, 3])
+    end
+
+    def test_input_args_immutability
+      better_struct = BetterStruct.new(head: [1, 2, 3])
+      tail = [4, 5, 6]
+
+      better_struct.head.concat(tail)
+
+      assert better_struct.head == BetterStruct.new([1, 2, 3, 4, 5, 6])
+      assert tail == [4, 5, 6]
+    end
+  end
+
+  class Methodize < Minitest::Test
+    def test_methodize_checking
+      better_struct = BetterStruct.new(not__undescore: 1)
+
+      assert better_struct.not__undescore.value == nil
+      assert better_struct.not_undescore.value == 1
+    end
+
+    def test_methodizing
+      better_struct = BetterStruct.new("FooBar  foo_bar": 1)
+
+      assert better_struct.foo_bar_foo_bar.value == 1
+    end
+
     def test_methods_underscoring
       better_struct = BetterStruct.new({ "! CHAMPION !" => 1 })
 
@@ -100,24 +133,6 @@ module BetterStructTest
       better_struct = BetterStruct.new({ "Título" => 1 })
 
       assert better_struct.titulo.value == 1
-    end
-
-    def test_new_assignment
-      better_struct = BetterStruct.new
-
-      better_struct.head = [1, 2, 3]
-
-      assert better_struct.head == BetterStruct.new([1, 2, 3])
-    end
-
-    def test_input_args_immutability
-      better_struct = BetterStruct.new(head: [1, 2, 3])
-      tail = [4, 5, 6]
-
-      better_struct.head.concat(tail)
-
-      assert better_struct.head == BetterStruct.new([1, 2, 3, 4, 5, 6])
-      assert tail == [4, 5, 6]
     end
   end
 end

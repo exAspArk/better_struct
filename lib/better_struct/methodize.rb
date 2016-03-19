@@ -29,7 +29,9 @@ private
   end
 
   def __methodized?(string)
-    !string =~ BEFORE_FIRST_DIGIT_OR_NON_UNDERSCORED_REGEXP && !string =~ UNDERSCORE_DUPLICATES_REGEXP
+    return false if string =~ BEFORE_FIRST_DIGIT_OR_NON_UNDERSCORED_REGEXP
+    return false if string =~ UNDERSCORE_DUPLICATES_REGEXP
+    true
   end
 
   def __transliterate!(string)

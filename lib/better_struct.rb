@@ -35,7 +35,7 @@ private
     @__defined_methods = {}
 
     if value && value.respond_to?(:each_pair)
-      value.each_pair { |key, v| @__defined_methods[__methodize(key)] = v }
+      value.each_pair { |k, v| @__defined_methods[__methodize(k)] = v }
     end
   end
 
