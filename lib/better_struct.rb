@@ -10,6 +10,7 @@ class BetterStruct
 
   def initialize(value = nil)
     @value = value
+    __load_defined_methods
   end
 
   def ==(other)
@@ -46,10 +47,10 @@ private
   def method_missing(method_name, *args, &block)
     if value.respond_to?(method_name)
       __delegate_method(method_name, *args, &block)
-    elsif __assignment?(method_name) && __defined_methods
+    elsif __assignment?(method_name)
       @__defined_methods[__methodize(method_name[0...-1])] = args.first
     else
-      __wrap(__defined_methods[method_name.to_s])
+      __wrap(@__defined_methods[method_name.to_s])
     end
   end
 
@@ -57,15 +58,11 @@ private
     method_name[-1] == EQUAL_SIGN
   end
 
-  def __defined_methods
-    @__defined_methods ||= begin
-      result = {}
+  def __load_defined_methods
+    @__defined_methods = {}
 
-      if value && value.respond_to?(:each_pair)
-        value.each_pair { |key, v| result[__methodize(key.to_s)] = v }
-      end
-
-      result
+    if value && value.respond_to?(:each_pair)
+      value.each_pair { |key, v| @__defined_methods[__methodize(key.to_s)] = v }
     end
   end
 
